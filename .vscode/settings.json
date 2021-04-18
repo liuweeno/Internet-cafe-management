@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "iphlpapi.h": "c",
+        "iomanip": "cpp",
+        "iostream": "cpp",
+        "*.tcc": "cpp",
+        "requirements.h": "c",
+        "stdlib.h": "c"
+    }
+}
