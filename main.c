@@ -4,7 +4,7 @@
 
 void Card_management(card ** cards_list);
 void Charging_management(card * cards_list);
-int Panel(int super, admin ** admin_list, card ** cards_list);
+bool Panel(int super, admin ** admin_list, card ** cards_list);
 void Admin_login(admin ** admin_list,card ** cards_list);
 void Permission_management(admin ** admin_list);
 void Save_file(admin * admin_list, card * cards_list);
@@ -127,7 +127,7 @@ void Admin_login(admin ** admin_list,card ** cards_list)
     }
 }
 
-int Panel(int super, admin ** admin_list, card ** cards_list)
+bool Panel(int super, admin ** admin_list, card ** cards_list)
 {
     while (1)
     {
@@ -169,7 +169,7 @@ int Panel(int super, admin ** admin_list, card ** cards_list)
         case '6':
             puts("µÇ³ö³É¹¦£¡");
             system("pause");
-            return 1;
+            return true;
 
         case '7':
             if (super)
@@ -182,7 +182,7 @@ int Panel(int super, admin ** admin_list, card ** cards_list)
 
         case '0':
             Save_file(*admin_list, *cards_list);
-            return 0;
+            return false;
 
         default:
             break;
