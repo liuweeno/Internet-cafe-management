@@ -9,3 +9,4 @@ typedef struct Admins
 } admin;
 
 void Add_admin(admin ** admin_list);
+void Del_Admin(admin ** admin_list);

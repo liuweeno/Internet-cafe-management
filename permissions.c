@@ -50,3 +50,28 @@ void Add_admin(admin ** admin_list)
     puts("添加完成！");
     system("pause");
 }
+
+void Del_Admin(admin ** admin_list)
+{
+    system("cls");
+    char username[11];
+    printf("输入要删除管理员的用户名：");
+    scanf("%s", username);
+    admin * current = * admin_list;
+    admin * prev = current;
+    while (current)
+    {
+        if (!strcmp(username, current->username))
+        {
+            prev->next = current->next;
+            free(current);
+            puts("删除完成！");
+            system("pause");
+            return;
+        }
+        prev = current;
+        current = current->next;
+    }
+    puts("没有符合此用户名的管理员。");
+    system("pause");
+}

@@ -273,6 +273,7 @@ void Permission_management(admin ** admin_list)
                 break;
             
             case '2':
+                Del_Admin(admin_list);
                 break;
             
             case '0':
