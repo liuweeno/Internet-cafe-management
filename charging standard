@@ -1,0 +1,161 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void add_rules()
+{
+    FILE *file;
+    double money_am,money_pm;
+    printf("要设定的上午每小时的金额为： ");
+    scanf("%lf",&money_am);
+    printf("要设定的下午每小时的金额为： ");
+    scanf("%lf",&money_pm);
+    if((file=fopen("data/rate.txt","w"))==NULL)
+    {
+        printf("open error!\n");
+        exit(0);
+    }
+    fprintf(file,"%lf %lf",money_am,money_pm);
+    if(fclose(file))
+    {
+        printf("close error!\n");
+        exit(0);
+    }
+}
+
+double find_rules(int time)
+{
+    FILE *file;
+    if((file=fopen("data/rate.txt","r"))==NULL)
+    {
+        printf("open error!\n");
+        exit(0);
+    }
+    double money_am,money_pm;
+    fscanf(file,"%lf%lf",&money_am,&money_pm);
+    if(time>=0&&time<=11)
+    {
+        if(money_am==0)
+        {
+            printf("该规则为空，无法调用\n");
+            return;
+        }
+        return money_am;
+    }
+    if(time>=12&&time<=23)
+    {
+        if(money_pm==0)
+        {
+            printf("该规则为空，无法调用\n");
+            return;
+        }
+        return money_pm;        
+    }
+
+    if(fclose(file))
+    {
+        printf("close error!\n");
+        exit(0);
+    }   
+}
+
+void delete_rules()
+{
+    int choose;
+    FILE *file;
+    if((file=fopen("data/rate.txt","a+"))==NULL)
+    {
+        printf("open error!\n");
+        exit(0);
+    }
+    double money_am,money_pm;
+    fscanf(file,"%lf%lf",&money_am,&money_pm);
+    printf("第一条规则: 上午每小时%.1lf元, 第二条规则: 下午每小时%.1lf元\n\n",money_am,money_pm);
+        if(fclose(file))
+    {
+        printf("close error!\n");
+        exit(0);
+    }   
+    if((file=fopen("data/rate.txt","w"))==NULL)
+    {
+        printf("open error!\n");
+        exit(0);
+    }
+    printf("删除第一条输入1，删除第二条输入2，全部删除输入3\n");
+    scanf("%d",&choose);
+    if(choose==1)
+    fprintf(file,"%lf %lf",0,money_pm);
+    if(choose==2)
+    fprintf(file,"%lf %lf",money_am,0);
+    if(choose==3)
+    fprintf(file,"%lf %lf",0,0);
+    else
+    {
+        printf("输入错误,请稍后重新调用函数\n");
+        fprintf(file,"%lf %lf",money_am,money_pm);
+    }
+    
+    if(fclose(file))
+    {
+        printf("close error!\n");
+        exit(0);
+    }   
+}
+
+void revise_rules()
+{
+    FILE *file;
+    if((file=fopen("data/rate.txt","r"))==NULL)
+    {
+        printf("open error!\n");
+        exit(0);
+    }
+    double money_am,money_pm;
+    fscanf(file,"%lf%lf",&money_am,&money_pm);
+    printf("第一条规则: 上午每小时%.1lf元, 第二条规则: 下午每小时%.1lf元\n",money_am,money_pm);
+        if(fclose(file))
+    {
+        printf("close error!\n");
+        exit(0);
+    }   
+    printf("修改第一条输入1，修改第二条输入2 : ");
+    int tamp;
+    double after;
+    scanf("%d",&tamp);
+    printf("要修改为: ");
+    scanf("%lf",&after);
+     if((file=fopen("data/rate.txt","w"))==NULL)
+    {
+        printf("open error!\n");
+        exit(0);
+    }
+    if(tamp==1)
+    {
+        money_am=after;
+        fprintf(file,"%lf %lf",money_am,money_pm);
+    }
+    
+    if(tamp==2)
+    {
+        money_pm=after;
+        fprintf(file,"%lf %lf",money_am,money_pm);
+    }
+    
+    printf("修改后的规则为:上午每小时%.1lf,下午每小时%.1lf\n",money_am,money_pm);
+    if(fclose(file))
+    {
+        printf("close error!\n");
+        exit(0);
+    }   
+}
+
+int main()
+{
+    int time=8;
+    double cost;
+    // add_rules();
+    // cost=find_rules(time);
+    // printf("%lf\n",cost);
+    // delete_rules();
+    revise_rules();
+    return 0;
+}
