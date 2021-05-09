@@ -47,6 +47,8 @@ void Add_card(card ** fuckme)
     current->status = 0;
     current->start_time = 0;
     current->cost_per_hour = 0;
+    memset(current->times, 0, sizeof(int) * 12);
+    memset(current->countmoney, 0, sizeof(int) * 12);
     current->next = NULL;
     puts("Ìí¼ÓÍê³É£¡");
     system("pause");
@@ -96,7 +98,7 @@ void Query_card(card * fuckme)
         {
             strftime(time, 50, "%Y-%m-%d %X", localtime(&fuckme->start_time));
             printf("| ¿¨ºÅ | %s\n", fuckme->id);
-            printf("| Óà¶î | %g\n", fuckme->balance);
+            printf("| Óà¶î | %.2lf\n", fuckme->balance);
             switch (fuckme->status)
             {
                 case 0:

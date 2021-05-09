@@ -1,13 +1,17 @@
 #include "requirements.h"
 #include "card.h"
 #include "admin.h"
+#include "charging.h"
 
 void Card_management(card ** cards_list);
-void Charging_management(card * cards_list);
-bool Panel(int super, admin ** admin_list, card ** cards_list);
-void Admin_login(admin ** admin_list,card ** cards_list);
+void Charging_management(jifei ** rates_list, card * cards_list);
+bool Panel(int super, admin ** admin_list, card ** cards_list, jifei ** rates_list);
+void Admin_login(admin ** admin_list,card ** cards_list, jifei ** rates_list);
 void Permission_management(admin ** admin_list);
-void Save_file(admin * admin_list, card * cards_list);
+void Charging_rule(jifei ** rates_list);
+void Cost_management(card ** cards_list);
+void Statistics(card ** cards_list);
+void Save_file(admin * admin_list, card * cards_list, jifei * rates_list);
 
 int main(void)
 {
@@ -30,7 +34,9 @@ int main(void)
     while (1)
     {
         card * new = (card *)malloc(sizeof(card));
-        if (EOF == fscanf(file, "%d %s %s %lf %ld %lf\n", &new->status, new->id, new->pass, &new->balance, &new->start_time, &new->cost_per_hour))
+        if (EOF == fscanf(file, "%d %s %s %lf %ld %lf %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n", &new->status, new->id, new->pass, &new->balance, &new->start_time, &new->cost_per_hour, \
+        &new->times[0], &new->times[1], &new->times[2], &new->times[3], &new->times[4], &new->times[5], &new->times[6], &new->times[7], &new->times[8], &new->times[9], &new->times[10], &new->times[11], \
+        &new->countmoney[0], &new->countmoney[1], &new->countmoney[2], &new->countmoney[3], &new->countmoney[4], &new->countmoney[5], &new->countmoney[6], &new->countmoney[7], &new->countmoney[8], &new->countmoney[9], &new->countmoney[10], &new->countmoney[11]))
         {
             free(new);
             break;
@@ -64,12 +70,23 @@ int main(void)
         }
     }
     fclose(file);
-    Admin_login(&admin_list, &cards_list);
+    //load rate.txt
+    if (!access("data/rate.txt", F_OK))
+    {
+        file = fopen("data/rate.txt", "r");
+    }
+    else {
+        file = fopen("data/rate.txt", "w+");
+    }
+    jifei * rates_list = NULL;
+    creatlink(&rates_list, file);
+    fclose(file);
+    Admin_login(&admin_list, &cards_list, &rates_list);
 
     return 0;
 }
 
-void Admin_login(admin ** admin_list,card ** cards_list)
+void Admin_login(admin ** admin_list,card ** cards_list, jifei ** rates_list)
 {
     char id[11];
     char pass[17];
@@ -108,7 +125,7 @@ void Admin_login(admin ** admin_list,card ** cards_list)
                 {
                     puts("登录成功！");
                     system("pause");
-                    if (!Panel(current->status, admin_list, cards_list))
+                    if (!Panel(current->status, admin_list, cards_list, rates_list))
                         return;
                 }
                 else {
@@ -127,7 +144,7 @@ void Admin_login(admin ** admin_list,card ** cards_list)
     }
 }
 
-bool Panel(int super, admin ** admin_list, card ** cards_list)
+bool Panel(int super, admin ** admin_list, card ** cards_list, jifei ** rates_list)
 {
     while (1)
     {
@@ -151,19 +168,19 @@ bool Panel(int super, admin ** admin_list, card ** cards_list)
             break;
         
         case '2':
-
+            Charging_rule(rates_list);
             break;
         
         case '3':
-            Charging_management(*cards_list);
+            Charging_management(rates_list, *cards_list);
             break;
         
         case '4':
-
+            Cost_management(cards_list);
             break;
         
         case '5':
-
+            Statistics(cards_list);
             break;
 
         case '6':
@@ -181,7 +198,7 @@ bool Panel(int super, admin ** admin_list, card ** cards_list)
                 break;
 
         case '0':
-            Save_file(*admin_list, *cards_list);
+            Save_file(*admin_list, *cards_list, *rates_list);
             return false;
 
         default:
@@ -225,7 +242,7 @@ void Card_management(card ** cards_list)
     }
 }
 
-void Charging_management(card * cards_list)
+void Charging_management(jifei ** rates_list, card * cards_list)
 {
     while (1)
     {
@@ -239,7 +256,7 @@ void Charging_management(card * cards_list)
         switch (getch())
         {
             case '1':
-                Go_online(cards_list);
+                Go_online(rates_list, cards_list);
                 break;
             
             case '2':
@@ -285,12 +302,119 @@ void Permission_management(admin ** admin_list)
     }
 }
 
-void Save_file(admin * admin_list, card * cards_list)
+void Charging_rule(jifei ** rates_list)
+{
+    while (1)
+    {
+        system("cls");
+        puts("===== 计费标准管理 ======");
+        puts("=   1. 新增计费标准     =");
+        puts("=   2. 查询计费标准     =");
+        puts("=   3. 删除计费标准     =");
+        puts("=   4. 修改计费标准     =");
+        puts("=   0. 返回上一级菜单   =");
+        puts("=========================");
+        puts("请输入对应选项的序号：");
+        switch (getch())
+        {
+            case '1':
+                creatstandard(rates_list);
+                break;
+            
+            case '2':
+                inquire(rates_list, 0);
+                break;
+            
+            case '3':
+                delete(rates_list);
+                break;
+            
+            case '4':
+                change(rates_list);
+                break;
+            
+            case '0':
+                return;
+
+            default:
+                break;
+        }
+    }
+}
+
+void Cost_management(card ** cards_list)
+{
+    while (1)
+    {
+        system("cls");
+        puts("====== 费用管理 =======");
+        puts("=      1. 充值        =");
+        puts("=      2. 退费        =");
+        puts("=  0. 返回上一级菜单  =");
+        puts("=======================");
+        puts("请输入对应选项的序号：");
+        switch (getch())
+        {
+            case '1':
+                recharge(cards_list);
+                break;
+            
+            case '2':
+                returnmoney(cards_list);
+                break;
+            
+            case '0':
+                return;
+
+            default:
+                break;
+        }
+    }
+}
+
+void Statistics(card ** cards_list)
+{
+    while (1)
+    {
+        system("cls");
+        puts("======== 查询统计 =========");
+        puts("=    1. 查询消费记录      =");
+        puts("=    2. 统计总营业额      =");
+        puts("=    3. 统计月营业额      =");
+        puts("=    0. 返回上一级菜单    =");
+        puts("===========================");
+        puts("请输入对应选项的序号：");
+        switch (getch())
+        {
+            case '1':
+                record_card(cards_list);
+                break;
+            
+            case '2':
+                totalmoney(cards_list);
+                break;      
+            
+            case '3':
+                total_turnover(cards_list);
+                break;
+            
+            case '0':
+                return;
+
+            default:
+                break;
+        }
+    }
+}
+
+void Save_file(admin * admin_list, card * cards_list, jifei * rates_list)
 {
     FILE * file = fopen("data/card.txt", "w");
     while (cards_list)
     {
-        fprintf(file, "%d %s %s %lf %ld %lf\n", cards_list->status, cards_list->id, cards_list->pass, cards_list->balance, cards_list->start_time, cards_list->cost_per_hour);
+        fprintf(file, "%d %s %s %lf %ld %lf %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n", cards_list->status, cards_list->id, cards_list->pass, cards_list->balance, cards_list->start_time, cards_list->cost_per_hour, \
+        cards_list->times[0], cards_list->times[1], cards_list->times[2], cards_list->times[3], cards_list->times[4], cards_list->times[5], cards_list->times[6], cards_list->times[7], cards_list->times[8], cards_list->times[9], cards_list->times[10], cards_list->times[11], \
+        cards_list->countmoney[0], cards_list->countmoney[1], cards_list->countmoney[2], cards_list->countmoney[3], cards_list->countmoney[4], cards_list->countmoney[5], cards_list->countmoney[6], cards_list->countmoney[7], cards_list->countmoney[8], cards_list->countmoney[9], cards_list->countmoney[10], cards_list->countmoney[11]);
         card * temp = cards_list;
         cards_list = cards_list->next;
         free(temp);
@@ -303,6 +427,18 @@ void Save_file(admin * admin_list, card * cards_list)
         fprintf(file, "%d %s %s\n", admin_list->status, admin_list->username, admin_list->password);
         admin * temp = admin_list;
         admin_list = admin_list->next;
+        free(temp);
+    }
+    fclose(file);
+
+    file = fopen("data/rate.txt", "w");
+    while (rates_list)
+    {
+        fprintf(file, "%d %d", rates_list->time, rates_list->money);
+        jifei * temp = rates_list;
+        rates_list = rates_list->next;
+        if (rates_list)
+            fputc(' ', file);
         free(temp);
     }
     fclose(file);

@@ -1,7 +1,8 @@
 #include "card.h"
+#include "charging.h"
 #include "requirements.h"
 
-void Go_online(card * card_list)
+void Go_online(jifei ** rates_list, card * card_list)
 {
     char id[11];
     char pass[17];
@@ -19,8 +20,12 @@ void Go_online(card * card_list)
             {
                 if (0 == card_list->status)
                 {
+                    time_t rawTime = time(NULL);
+                    struct tm * tmTime = localtime(&rawTime);
                     card_list->status = 1;
                     card_list->start_time = time(NULL);
+                    card_list->times[tmTime->tm_mon] ++;
+                    card_list->cost_per_hour = inquire(rates_list, 1);
                     puts("上机成功！");
                 }
                 else if (1 == card_list->status)
@@ -59,7 +64,7 @@ void Go_offline(card * card_list)
             {
                 card_list->status = 0;
                 time_t stoptime = time(NULL);
-                long online_hours = (stoptime - card_list->start_time) % 3600 ? (stoptime - card_list->start_time) : (stoptime - card_list->start_time) + 1;
+                long online_hours = (stoptime - card_list->start_time) % 3600 ? (stoptime - card_list->start_time) / 3600 + 1 : (stoptime - card_list->start_time) / 3600;
                 double consume = online_hours * card_list->cost_per_hour;
                 card_list->balance -= consume;
                 printf("成功下机。本次使用消费了 %g 元，剩余余额 %g 元。\n", consume, card_list->balance);
