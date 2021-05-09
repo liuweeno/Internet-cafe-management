@@ -5,6 +5,7 @@
         "iostream": "cpp",
         "*.tcc": "cpp",
         "requirements.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "time.h": "c"
     }
 }
