@@ -96,7 +96,10 @@ void Query_card(card * cards_list)
     {
         if (!strcmp(cards_list->id, id))
         {
-            strftime(time, 50, "%Y-%m-%d %X", localtime(&cards_list->start_time));
+            if (cards_list->start_time == 0)
+                strcpy(time, "Î´ÔøÉÏ»ú");
+            else
+                strftime(time, 50, "%Y-%m-%d %X", localtime(&cards_list->start_time));
             printf("| ¿¨ºÅ | %s\n", cards_list->id);
             printf("| Óà¶î | %.2lf\n", cards_list->balance);
             switch (cards_list->status)
