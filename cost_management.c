@@ -16,6 +16,10 @@ void recharge(card **head)
         if(!strcmp(p->id, id))
         {
             p->balance=p->balance+money;
+            if(p->status==2 && p->balance>=0)
+            {
+                p->status=0;
+            }
             //ÔÂ·İ
             time_t lt;
             struct tm *ptr;

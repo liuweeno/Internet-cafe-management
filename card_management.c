@@ -1,19 +1,19 @@
 #include "requirements.h"
 #include "card.h"
 
-void Add_card(card ** fuckme)
+void Add_card(card ** cards_list)
 {
     system("cls");
-    card * current = *fuckme;
+    card * current = *cards_list;
     char temp_id[11];
     
     printf("请输入卡号（卡号不得超过 10 个字符）：");
     scanf("%s", temp_id);
     while ('\n' != getchar());
-    if (!*fuckme)
+    if (!*cards_list)
     {
-        *fuckme = (card *)malloc(sizeof(card));
-        current = *fuckme;
+        *cards_list = (card *)malloc(sizeof(card));
+        current = *cards_list;
     }
     else {
         card * temp = NULL;
@@ -54,7 +54,7 @@ void Add_card(card ** fuckme)
     system("pause");
 }
 
-void Cancel_card(card * fuckme)
+void Cancel_card(card * cards_list)
 {
     system("cls");
     char id[11];
@@ -64,13 +64,13 @@ void Cancel_card(card * fuckme)
     scanf("%s", id);
     printf("请输入卡的密码：");
     scanf("%s", pass);
-    while (fuckme)
+    while (cards_list)
     {
-        if (!strcmp(id, fuckme->id))
+        if (!strcmp(id, cards_list->id))
         {
-            if (!strcmp(pass, fuckme->pass))
+            if (!strcmp(pass, cards_list->pass))
             {
-                fuckme->status = 3;
+                cards_list->status = 3;
                 puts("注销完成！");
             }
             else {
@@ -79,27 +79,27 @@ void Cancel_card(card * fuckme)
             system("pause");
             return;
         }
-        fuckme = fuckme->next;
+        cards_list = cards_list->next;
     }
     puts("该卡号不存在！");
     system("pause");
 }
 
-void Query_card(card * fuckme)
+void Query_card(card * cards_list)
 {
     system("cls");
     char id[11];
     char time[50];
     printf("请输入要查询的卡号：");
     scanf("%s", id);
-    while (fuckme)
+    while (cards_list)
     {
-        if (!strcmp(fuckme->id, id))
+        if (!strcmp(cards_list->id, id))
         {
-            strftime(time, 50, "%Y-%m-%d %X", localtime(&fuckme->start_time));
-            printf("| 卡号 | %s\n", fuckme->id);
-            printf("| 余额 | %.2lf\n", fuckme->balance);
-            switch (fuckme->status)
+            strftime(time, 50, "%Y-%m-%d %X", localtime(&cards_list->start_time));
+            printf("| 卡号 | %s\n", cards_list->id);
+            printf("| 余额 | %.2lf\n", cards_list->balance);
+            switch (cards_list->status)
             {
                 case 0:
                     puts("| 状态 | 离线");
@@ -109,7 +109,7 @@ void Query_card(card * fuckme)
                 case 1:
                     puts("| 状态 | 在线");
                     printf("| 上机时间 | %s\n", time);
-                    printf("| 计费标准 | %g 元/小时\n", fuckme->cost_per_hour);
+                    printf("| 计费标准 | %g 元/小时\n", cards_list->cost_per_hour);
                     break;
 
                 case 2:
@@ -123,7 +123,7 @@ void Query_card(card * fuckme)
             system("pause");
             return;
         }
-        fuckme = fuckme->next;
+        cards_list = cards_list->next;
     }
     puts("无法找到该卡号！");
     system("pause");
