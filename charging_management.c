@@ -8,6 +8,12 @@ void Go_online(jifei ** rates_list, card * card_list)
     char pass[17];
 
     system("cls");
+    if (inquire(rates_list, 1) == -1)
+    {
+        puts("该时间段没有计费标准，无法上机！");
+        system("pause");
+        return;
+    }
     printf("请输入要上机的卡号：");
     scanf("%s", id);
     printf("请输入密码：");
